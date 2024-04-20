@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Inventario</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .carrito {
+            margin-top: 20px;
+        }
+        .carrito th, .carrito td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .carrito th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <img src="logo special.html.jpg" alt="Logo de la empresa" style="width: 100px; height: auto;">
+
+    <h1>Control de Inventario</h1>
+
+    <h2>Tabla de Productos (ctg_Producto)</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID Producto</th>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Precio Unitario</th>
+                <th>Stock Disponible</th>
+                <th>Stock Mínimo</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Aquí se pueden agregar filas dinámicamente desde la base de datos -->
+            <tr>
+                <td>1</td>
+                <td>Producto 1</td>
+                <td>Descripción del producto 1</td>
+                <td>$10.00</td>
+                <td>100</td>
+                <td>10</td>
+                <td><button onclick="agregarAlCarrito(1)">Agregar al Carrito</button></td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>Producto 2</td>
+                <td>Descripción del producto 2</td>
+                <td>$15.00</td>
+                <td>50</td>
+                <td>5</td>
+                <td><button onclick="agregarAlCarrito(2)">Agregar al Carrito</button></td>
+            </tr>
+            <!-- Puedes agregar más filas según sea necesario -->
+        </tbody>
+    </table>
+
+    <h2>Carrito de Compras</h2>
+    <table class="carrito">
+        <thead>
+            <tr>
+                <th>ID Producto</th>
+                <th>Nombre Producto</th>
+                <th>Cantidad</th>
+            </tr>
+        </thead>
+        <tbody id="carritoBody">
+            <!-- Aquí se mostrarán los productos agregados al carrito -->
+        </tbody>
+    </table>
+
+    <button onclick="comprar()">Comprar</button>
+
+    <script>
+        let carrito = [];
+
+        function agregarAlCarrito(idProducto) {
+            let productoEnCarrito = carrito.find(item => item.id === idProducto);
+            if (productoEnCarrito) {
+                productoEnCarrito.cantidad++;
+            } else {
+                let nombreProducto = document.querySelector(`tr[data-id="${idProducto}"] td:nth-child(2)`).textContent;
+                carrito.push({ id: idProducto, nombre: nombreProducto, cantidad: 1 });
+            }
+            mostrarCarrito();
+        }
+
+        function mostrarCarrito() {
+            let carritoBody = document.getElementById('carritoBody');
+            carritoBody.innerHTML = '';
+            carrito.forEach(item => {
+                let fila = document.createElement('tr');
+                fila.innerHTML = `
+                    <td>${item.id}</td>
+                    <td>${item.nombre}</td>
+                    <td>${item.cantidad}</td>
+                `;
+                carritoBody.appendChild(fila);
+            });
+        }
+
+        function enviarCorreo(correo, contenido) {
+            // Simulamos el envío del correo electrónico
+            console.log(`Enviando correo electrónico a ${correo} con el contenido:\n${contenido}`);
+        }
+
+        function comprar() {
+            let correo = prompt('Por favor, ingresa tu correo electrónico para enviar el ticket de compra:');
+            if (correo) {
+                let contenidoCorreo = 'Aquí está tu ticket de compra:\n\n';
+                contenidoCorreo += 'Productos:\n';
+                carrito.forEach(item => {
+                    contenidoCorreo += `- ${item.nombre}: ${item.cantidad}\n`;
+                });
+                contenidoCorreo += '\n¡Gracias por tu compra!';
+                enviarCorreo(correo, contenidoCorreo);
+                // Después de procesar la compra, podrías limpiar el carrito
+                carrito = [];
+                mostrarCarrito();
+            } else {
+                alert('Se requiere un correo electrónico para enviar el ticket de compra.');
+            }
+        }
+    </script>
+</body>
+</html>
